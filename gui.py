@@ -238,7 +238,8 @@ class Gui:
     def save(self):
         module_name = self.combo.get()
         try:
-            mark = float(self.entry_mark.get())
+            mark_input = self.entry_mark.get().replace(",", ".")
+            mark = float(mark_input)
             date = datetime.strptime(self.entry_date.get(), "%d.%m.%Y")
         except Exception as e:
             mb.showerror("Fehler", f"Ungültige Eingabe: {e}")
