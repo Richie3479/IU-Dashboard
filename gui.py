@@ -6,7 +6,20 @@ import tkinter as tk
 import tkinter.messagebox as mb
 
 class Gui:
+    """
+    Stellt die grafische Benutzeroberfläche für das Studien-Dashboard mit Tkinter bereit.
+
+    Visualisiert Fortschritt, Notenstatistiken, Semesterdiagramme und ermöglicht das Eintragen von Prüfungsleistungen.
+    """
     def __init__(self, root, course_of_study, controller):
+        """
+        Initialisiert die GUI mit Root-Fenster, Studienverlauf und Controller.
+
+        Args:
+            root (tk.Tk): Das Hauptfenster der Anwendung.
+            course_of_study (CourseOfStudy): Studienverlaufsobjekt.
+            controller (Controller): Controller zur Steuerung der Logik.
+        """
         self._root = root
         self._course_of_study = course_of_study
         self.controller = controller
@@ -41,24 +54,26 @@ class Gui:
         self._root.protocol("WM_DELETE_WINDOW", self.on_closing)
     
     def get_root(self):
+        """Gibt das Root-Fenster zurück."""
         return self._root
     
     def get_screen_width(self):
+        """Gibt die Bildschirmbreite zurück."""
         return self.screen_width
     
     def get_screen_height(self):
+        """Gibt die Bildschirmhöhe zurück."""
         return self.screen_height
     
-    # --- Einstellungen für das tkinter Fenster ---
     def tk_settings(self):
+        """Konfiguriert grundlegende Einstellungen des Hauptfensters."""
         self.get_root().title("Dashboard")
         self.get_root().geometry(f"{self.screen_width}x{self.screen_height}+0+0")
         self.get_root().state("zoomed")
         self.get_root().configure(bg="Gray")
     
-    # --- Erstellung der Progressbar
     def create_progressbar(self):
-        # --- Einstellungen der Progressbar ---
+        """Erstellt und konfiguriert die Fortschrittsanzeige (ECTS)."""
         self.progress_bar = ttk.Progressbar(
             self.get_root(), 
             orient="horizontal", 
@@ -69,7 +84,6 @@ class Gui:
         )
         self.progress_bar.pack(pady=20)
 
-        # --- Einstellungen für die %-Anzeige der Progressbar ---
         self.progress_label = tk.Label(
             self.get_root(), 
             text=(f"{self.controller.get_metrics()["progress_percent"]}%"), 
@@ -77,20 +91,32 @@ class Gui:
         )
         self.progress_label.place(in_=self.progress_bar, relx=0.5, rely=0.5, anchor="center")
 
-    # --- Vordefinierte Header Einstellung ---
     def table_header_config(self, headers, table_frame):
+        """
+        Erstellt einheitlich formatierte Tabellenüberschriften.
+
+        Args:
+            headers (list): Liste der Header-Texte.
+            table_frame (tk.Frame): Ziel-Frame für die Header.
+        """
         for col, text in enumerate(headers):
             label = tk.Label(table_frame, text=text, bg="#2C5C8C", fg="white", font=("Arial", 12, "bold"), padx=10, pady=5)
             label.grid(row=0, column=col, sticky="nsew")
 
-    # --- Vordefinierte Text Einstellung ---
     def table_values_config(self, values, table_frame):
+        """
+        Erstellt einheitlich formatierte Tabellenwerte.
+
+        Args:
+            values (list): Liste der Werte.
+            table_frame (tk.Frame): Ziel-Frame für die Werte.
+        """
         for col, text in enumerate(values):
             label = tk.Label(table_frame, text=text, font=("Arial", 11), padx=10, pady=5)
             label.grid(row=1, column=col, sticky="nsew")
 
-    # --- Tabelle 1 erstellen ---
     def create_table1(self):
+        """Erstellt Tabelle 1 mit allgemeinen Studienfortschrittsdaten."""
         if hasattr(self, 'table1_frame'):
             self.table1_frame.destroy()
         self.table1_frame = tk.Frame(self._root)
@@ -114,8 +140,8 @@ class Gui:
         
         self.table_values_config(values, self.table1_frame)
 
-    # --- Tabelle 2 erstellen ---
     def create_table2(self):
+        """Erstellt Tabelle 2 mit Notenstatistiken."""
         if hasattr(self, 'table2_frame'):
             self.table2_frame.destroy()   
         self.table2_frame = tk.Frame(self._root)
@@ -139,8 +165,8 @@ class Gui:
 
         self.table_values_config(values, self.table2_frame)
 
-    # --- Tabelle 3 für die Semester erstellen ---
     def create_table3(self):
+        """Erstellt Kuchendiagramme für Semester 1–3."""
         if hasattr(self, 'table3_frame'):
             self.table3_frame.destroy() 
         self.table3_frame = tk.Frame(self._root)
@@ -154,8 +180,8 @@ class Gui:
         canvas2.get_tk_widget().pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
         canvas3.get_tk_widget().pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
 
-    # --- Tabelle 4 für die Semester erstellen ---
     def create_table4(self):
+        """Erstellt Kuchendiagramme für Semester 4–6."""
         if hasattr(self, 'table4_frame'):
             self.table4_frame.destroy()
         self.table4_frame = tk.Frame(self._root)
@@ -169,8 +195,17 @@ class Gui:
         canvas2.get_tk_widget().pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
         canvas3.get_tk_widget().pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
 
-    # --- Einstellungen für ein Kuchendiagramm ---
     def pie_diagram(self, semester_number, master):
+        """
+        Erstellt ein Kuchendiagramm für ein bestimmtes Semester.
+
+        Args:
+            semester_number (int): Semesterzahl (1–6).
+            master (tk.Frame): Frame, in dem das Diagramm angezeigt wird.
+
+        Returns:
+            FigureCanvasTkAgg: Das Canvas-Objekt mit dem Diagramm.
+        """
         semester_number = semester_number - 1
         fig, ax = plt.subplots(figsize=(4, 3))  
         fig.patch.set_facecolor('Gray')         
@@ -199,8 +234,8 @@ class Gui:
         plt.close(fig)
         return canvas
     
-    # --- Einstellungen für das Hinzufügen von Noten zu den Modulen ---
     def add_performance(self):
+        """Öffnet ein Eingabefenster zum Hinzufügen einer neuen Prüfungsleistung."""
         self.top = tk.Toplevel()
         self.top_settings()
 
@@ -234,8 +269,8 @@ class Gui:
         save_button = tk.Button(self.top, text="Speichern", command=self.save, font=("Arial", 11), bg="#2C5C8C", fg="white")
         save_button.pack(pady=10)
 
-    # --- Speicherungsverfahren nach dem drücken des Speicher-Knopfs ---
     def save(self):
+        """Verarbeitet die Eingabe im Hinzufügen-Dialog und speichert die Note."""
         module_name = self.combo.get()
         try:
             mark_input = self.entry_mark.get().replace(",", ".")
@@ -249,8 +284,8 @@ class Gui:
         self.top.destroy()
         self.update_display()
 
-    # --- Einstellungen für das 2. Fenster ---
     def top_settings(self):
+        """Konfiguriert das Eingabefenster zum Hinzufügen neuer Leistungen."""
         width = 800
         height = 200
 
@@ -261,8 +296,8 @@ class Gui:
         self.top.geometry(f"{width}x{height}+{x}+{y}")
         self.top.configure(bg="Lightgray")
 
-    # --- Update der Kompletten Übersicht ---
     def update_display(self):
+        """Aktualisiert alle GUI-Komponenten nach Änderungen."""
         self.update_progressbar()
 
         # --- Lösche Tabellen-Frames ---
@@ -283,8 +318,8 @@ class Gui:
         # --- Button wieder ganz unten hinzufügen ---
         self.add_performance_button.pack()
 
-    # --- Update der Progressbar ---
     def update_progressbar(self):
+        """Aktualisiert die Fortschrittsanzeige (ECTS + Prozentanzeige)."""
         reached = self.controller.get_metrics()["reached_ects"]
         total = self.controller.get_metrics()["total_ects"]
         progress_percent = self.controller.get_metrics()["progress_percent"]
@@ -294,12 +329,11 @@ class Gui:
 
         self.progress_label.config(text=f"{progress_percent}%")
 
-    # --- Einstellungen was beim schließen passiert ---
     def on_closing(self):
+        """Verarbeitet das sichere Beenden des Programms."""
         self.get_root().quit()
         self.get_root().destroy()
 
-    # --- Startet den Mainloop ---
     def run(self):
-        # Tkinter mainloop starten
+        """Startet die Tkinter-Hauptschleife."""
         self._root.mainloop()

@@ -8,7 +8,13 @@ from module import Module
 from controller import Controller
 
 def main():
-    # --- Daten laden ---
+    """
+    Hauptfunktion zum Laden der CSV-Daten, Erstellen der Objekte und Starten der GUI.
+
+    Lädt Studiengang-, Semester- und Moduldaten aus CSV-Dateien,
+    wandelt Datenformate um, erstellt Objekte für Studiengang, Semester und Module,
+    initialisiert den Controller und startet die grafische Benutzeroberfläche.
+    """
     try:
         course_of_study_df = pd.read_csv("course_of_study.csv")
         semester_df = pd.read_csv("semester.csv")
