@@ -86,7 +86,7 @@ class Gui:
 
         self.progress_label = tk.Label(
             self.get_root(), 
-            text=(f"{self.controller.get_metrics()["progress_percent"]}%"), 
+            text=(f"{self.controller.get_metrics()['progress_percent']}%"),
             font=("Arial", 10, "bold")
         )
         self.progress_label.place(in_=self.progress_bar, relx=0.5, rely=0.5, anchor="center")
@@ -133,7 +133,7 @@ class Gui:
 
         values = [
             self.controller.time_left_display(),
-            f"{self.controller.get_metrics()["reached_ects"]}/{self.controller.get_metrics()["total_ects"]}",
+            f"{self.controller.get_metrics()['reached_ects']}/{self.controller.get_metrics()['total_ects']}",
             self.controller.get_metrics()["necessary_ects_pm"],
             self.controller.get_metrics()["ects_this_month"]
         ]
